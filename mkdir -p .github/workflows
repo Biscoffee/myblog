@@ -1,0 +1,29 @@
+name: Hugo site CI
+
+on:
+  push:
+    branches:
+      - main  # 当 push main 分支时触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true  # 如果你使用了主题子模块
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.152.2'  # 对应你本地 Hugo 版本
+
+      - name: Build
+        run: hugo --minify  # 编译生成 public/
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # 自动授权
+          publish_dir: ./public  # Hugo 输出目录
